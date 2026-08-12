@@ -67,4 +67,5 @@ Next I built the detection engine. It can take log inputs which have been parsed
 
 We are able to output alerts, which can contain the type of alert, address, target etc.
 
-# 
+# Logging in
+Next I created the first detection engine, which will detect for failed login attampts using the standarised logs we parsed. The detector finds where event_type is failed login or failed logon or where status is failed or invalid user. It returns a list of alerts in the format outlined.
