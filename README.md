@@ -55,3 +55,4 @@ username: root
 event_id: 1234
 
 # Parsing
+Next I built parsers in the files outlined in the file parsers under src. The parsers would parse inputted logs into the global log I designed above. The apache parser parses access logs by extracting IP, HTTP method, status code, path, referrer, user agent and username. It also parses error logs, and normalizes into the format outlined above. The parsers are designed to be used by my detection engines and report generator. I also build similar windows, ssh and firewall log parsers.
