@@ -56,3 +56,15 @@ event_id: 1234
 
 # Parsing
 Next I built parsers in the files outlined in the file parsers under src. The parsers would parse inputted logs into the global log I designed above. The apache parser parses access logs by extracting IP, HTTP method, status code, path, referrer, user agent and username. It also parses error logs, and normalizes into the format outlined above. The parsers are designed to be used by my detection engines and report generator. I also build similar windows, ssh and firewall log parsers.
+
+# Detecting
+Next I built the detection engine. It can take log inputs which have been parsed into the standardised format, check for the rules I highlighted in the plan and output alerts. The rules we check for are:
+- A failed login
+- Brute force attack
+- Suspicous IP addresses
+- Open ports
+- Multiple attack sources
+
+We are able to output alerts, which can contain the type of alert, address, target etc.
+
+# 
