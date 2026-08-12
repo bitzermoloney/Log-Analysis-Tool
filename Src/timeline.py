@@ -1,0 +1,1 @@
+# This file will create a timeline of the events in the analysis window.
