@@ -92,4 +92,19 @@ This is an example of a real world risk scoring SIEM-style system.
 
 The final detection engine also includes a detect method returning suspicous IP alerts and a detect_summary method returning grouped risk counts.
 
+# Timelining
+Next I need to look through all the logs and categorise them by timestamp in order to create a timeline of all the alerts seen in the detection window. The timelining is seen in the file timeline.py:
+- Can add multiple alerts to the timeline
+- Can get all the events in chronological order
+- Format into a human readable text format
+- Save the formatted timeline to a txt file
+- Group events by severity (No, Caution, Critical)
+- Group events by type (failed login, firewall failure etc.)
+- Group events by log source (IP)
+- Get statistics such as the total events, events per severity or type etc.
+- Add a single alert to the timeline
+- Reset the timeline
+
+The methods are all ready for integration.
+
 # 
