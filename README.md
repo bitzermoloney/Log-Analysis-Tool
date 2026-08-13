@@ -137,4 +137,21 @@ Key features of the final report:
 - Colour coded. Risk levels and severity are colour coded for improved usability.
 - I created a test file and found the size to be 63.5KB with perfect rendering and usability.
 
-# 
+# Finishing up
+To complete the program, the following was added:
+1. Python modules:
+    - The main CLI entry point
+    - The log analyser orchestrator, which makes sure every file runs and interacts smoothly
+    - The 4 log parsers were read and tested
+    - The 3 detection engines were read and tested
+    - The timeline generator was read and tested
+    - The HTML report generator was read and tested, and I confirmed that it definitely uses the Jinja2 template
+2. Documentation was added:
+    - QUICKSTART.md (nice 30 second intro and usage guide)
+    - USAGE.md (full, comprehensive usage guide)
+3. Sample data was added for testing purposes.
+4. The program was fully tested, and works.
+
+#
+#
+#
