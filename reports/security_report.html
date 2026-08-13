@@ -327,15 +327,15 @@
             <div class="analysis-period">
                 <div class="period-item">
                     <strong>Analysis Start</strong>
-                    <span>{{ analysis_start }}</span>
+                    <span>2026-08-12 15:00:00</span>
                 </div>
                 <div class="period-item">
                     <strong>Analysis End</strong>
-                    <span>{{ analysis_end }}</span>
+                    <span>2026-08-12 16:00:00</span>
                 </div>
                 <div class="period-item">
                     <strong>Report Generated</strong>
-                    <span>{{ report_generated }}</span>
+                    <span>2026-08-13 13:53:59</span>
                 </div>
             </div>
         </header>
@@ -348,19 +348,19 @@
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="label">Total Events Detected</div>
-                        <div class="value">{{ summary.total_events }}</div>
+                        <div class="value">3</div>
                     </div>
                     <div class="stat-card">
                         <div class="label">Suspicious IPs Found</div>
-                        <div class="value">{{ summary.total_suspicious_ips }}</div>
+                        <div class="value">2</div>
                     </div>
                     <div class="stat-card">
                         <div class="label">Critical Risk Events</div>
-                        <div class="value" style="color: #ff4757;">{{ summary.critical_events }}</div>
+                        <div class="value" style="color: #ff4757;">1</div>
                     </div>
                     <div class="stat-card">
                         <div class="label">Analysis Sources</div>
-                        <div class="value">{{ summary.total_sources }}</div>
+                        <div class="value">2</div>
                     </div>
                 </div>
             </section>
@@ -369,24 +369,33 @@
             <section class="section">
                 <h2>🚨 Top Suspicious IP Addresses</h2>
                 
-                {% if top_suspicious_ips %}
+                
                     <ul class="ip-list">
-                        {% for ip_info in top_suspicious_ips %}
+                        
                             <li class="ip-item">
                                 <div>
-                                    <strong>{{ ip_info.ip }}</strong>
+                                    <strong>192.168.1.50</strong>
                                     <br>
-                                    <span style="color: #666; font-size: 0.9em;">Risk Score: {{ ip_info.score }} | Violations: {{ ip_info.violation_count }}</span>
+                                    <span style="color: #666; font-size: 0.9em;">Risk Score: 7 | Violations: 2</span>
                                 </div>
-                                <span class="ip-badge {% if ip_info.risk_level == 'critical risk' %}risk-critical{% elif ip_info.risk_level == 'caution risk' %}risk-caution{% elif ip_info.risk_level == 'no risk' %}risk-no{% else %}risk-unknown{% endif %}">
-                                    {{ ip_info.risk_level|upper }}
+                                <span class="ip-badge risk-critical">
+                                    CRITICAL RISK
                                 </span>
                             </li>
-                        {% endfor %}
+                        
+                            <li class="ip-item">
+                                <div>
+                                    <strong>10.0.0.12</strong>
+                                    <br>
+                                    <span style="color: #666; font-size: 0.9em;">Risk Score: 3 | Violations: 1</span>
+                                </div>
+                                <span class="ip-badge risk-caution">
+                                    CAUTION RISK
+                                </span>
+                            </li>
+                        
                     </ul>
-                {% else %}
-                    <div class="no-data">No suspicious IPs detected during this analysis period.</div>
-                {% endif %}
+                
             </section>
 
             <!-- Alert Breakdown Section -->
@@ -396,44 +405,53 @@
                 <div class="breakdown-grid">
                     <div class="breakdown-section">
                         <h3>By Alert Type</h3>
-                        {% if summary.alert_types %}
-                            {% for alert_type, count in summary.alert_types.items() %}
+                        
+                            
                                 <div class="breakdown-item">
-                                    <span>{{ alert_type }}</span>
-                                    <span class="breakdown-count">{{ count }}</span>
+                                    <span>Brute force attack</span>
+                                    <span class="breakdown-count">1</span>
                                 </div>
-                            {% endfor %}
-                        {% else %}
-                            <p style="color: #95a5a6;">No data available</p>
-                        {% endif %}
+                            
+                                <div class="breakdown-item">
+                                    <span>Failed login</span>
+                                    <span class="breakdown-count">2</span>
+                                </div>
+                            
+                        
                     </div>
 
                     <div class="breakdown-section">
                         <h3>By Severity</h3>
-                        {% if summary.severity_breakdown %}
-                            {% for severity, count in summary.severity_breakdown.items() %}
+                        
+                            
                                 <div class="breakdown-item">
-                                    <span>{{ severity|capitalize }}</span>
-                                    <span class="breakdown-count">{{ count }}</span>
+                                    <span>High</span>
+                                    <span class="breakdown-count">1</span>
                                 </div>
-                            {% endfor %}
-                        {% else %}
-                            <p style="color: #95a5a6;">No data available</p>
-                        {% endif %}
+                            
+                                <div class="breakdown-item">
+                                    <span>Medium</span>
+                                    <span class="breakdown-count">2</span>
+                                </div>
+                            
+                        
                     </div>
 
                     <div class="breakdown-section">
                         <h3>By Source</h3>
-                        {% if summary.sources %}
-                            {% for source, count in summary.sources.items() %}
+                        
+                            
                                 <div class="breakdown-item">
-                                    <span>{{ source|capitalize }}</span>
-                                    <span class="breakdown-count">{{ count }}</span>
+                                    <span>Ssh</span>
+                                    <span class="breakdown-count">2</span>
                                 </div>
-                            {% endfor %}
-                        {% else %}
-                            <p style="color: #95a5a6;">No data available</p>
-                        {% endif %}
+                            
+                                <div class="breakdown-item">
+                                    <span>Windows</span>
+                                    <span class="breakdown-count">1</span>
+                                </div>
+                            
+                        
                     </div>
                 </div>
             </section>
@@ -442,49 +460,89 @@
             <section class="section">
                 <h2>🕐 Events Timeline</h2>
                 
-                {% if timeline_events %}
+                
                     <div>
-                        {% for event in timeline_events[:50] %}
+                        
                             <div class="timeline-event">
-                                <div class="timeline-timestamp">⏰ {{ event.timestamp }}</div>
+                                <div class="timeline-timestamp">⏰ 2026-08-12 15:03:00</div>
                                 <div class="timeline-type">
-                                    {{ event.alert_type }}
-                                    {% if event.severity %}
-                                        <span class="severity-{{ event.severity|lower }}">{{ event.severity|upper }}</span>
-                                    {% endif %}
+                                    Failed login
+                                    
+                                        <span class="severity-medium">MEDIUM</span>
+                                    
                                 </div>
                                 <div class="timeline-details">
-                                    {% if event.source %}
-                                        <div class="timeline-detail-item"><strong>Source:</strong> {{ event.source }}</div>
-                                    {% endif %}
-                                    {% if event.ip %}
-                                        <div class="timeline-detail-item"><strong>IP Address:</strong> {{ event.ip }}</div>
-                                    {% endif %}
-                                    {% if event.username %}
-                                        <div class="timeline-detail-item"><strong>Username:</strong> {{ event.username }}</div>
-                                    {% endif %}
-                                    {% if event.message %}
-                                        <div class="timeline-detail-item"><strong>Message:</strong> {{ event.message }}</div>
-                                    {% endif %}
+                                    
+                                        <div class="timeline-detail-item"><strong>Source:</strong> ssh</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>IP Address:</strong> 192.168.1.50</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Username:</strong> admin</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Message:</strong> Failed password attempt</div>
+                                    
                                 </div>
                             </div>
-                        {% endfor %}
-                        {% if timeline_events|length > 50 %}
-                            <div class="no-data">
-                                ... and {{ timeline_events|length - 50 }} more events
+                        
+                            <div class="timeline-event">
+                                <div class="timeline-timestamp">⏰ 2026-08-12 15:05:30</div>
+                                <div class="timeline-type">
+                                    Brute force attack
+                                    
+                                        <span class="severity-high">HIGH</span>
+                                    
+                                </div>
+                                <div class="timeline-details">
+                                    
+                                        <div class="timeline-detail-item"><strong>Source:</strong> ssh</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>IP Address:</strong> 192.168.1.50</div>
+                                    
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Message:</strong> 5 failed logins detected within 300 seconds</div>
+                                    
+                                </div>
                             </div>
-                        {% endif %}
+                        
+                            <div class="timeline-event">
+                                <div class="timeline-timestamp">⏰ 2026-08-12 15:10:00</div>
+                                <div class="timeline-type">
+                                    Failed login
+                                    
+                                        <span class="severity-medium">MEDIUM</span>
+                                    
+                                </div>
+                                <div class="timeline-details">
+                                    
+                                        <div class="timeline-detail-item"><strong>Source:</strong> windows</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>IP Address:</strong> 10.0.0.12</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Username:</strong> svcuser</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Message:</strong> Failed account logon</div>
+                                    
+                                </div>
+                            </div>
+                        
+                        
                     </div>
-                {% else %}
-                    <div class="no-data">No events recorded in the analysis window.</div>
-                {% endif %}
+                
             </section>
 
             <!-- Detailed Events Table -->
             <section class="section">
                 <h2>📋 Detailed Events Log</h2>
                 
-                {% if timeline_events %}
+                
                     <table>
                         <thead>
                             <tr>
@@ -497,27 +555,49 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for event in timeline_events %}
+                            
                                 <tr>
-                                    <td>{{ event.timestamp }}</td>
-                                    <td>{{ event.alert_type }}</td>
-                                    <td>{{ event.source or 'N/A' }}</td>
-                                    <td>{{ event.ip or 'N/A' }}</td>
-                                    <td>{{ event.username or 'N/A' }}</td>
+                                    <td>2026-08-12 15:03:00</td>
+                                    <td>Failed login</td>
+                                    <td>ssh</td>
+                                    <td>192.168.1.50</td>
+                                    <td>admin</td>
                                     <td>
-                                        {% if event.severity %}
-                                            <span class="severity-{{ event.severity|lower }}">{{ event.severity }}</span>
-                                        {% else %}
-                                            N/A
-                                        {% endif %}
+                                        
+                                            <span class="severity-medium">medium</span>
+                                        
                                     </td>
                                 </tr>
-                            {% endfor %}
+                            
+                                <tr>
+                                    <td>2026-08-12 15:05:30</td>
+                                    <td>Brute force attack</td>
+                                    <td>ssh</td>
+                                    <td>192.168.1.50</td>
+                                    <td>N/A</td>
+                                    <td>
+                                        
+                                            <span class="severity-high">high</span>
+                                        
+                                    </td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>2026-08-12 15:10:00</td>
+                                    <td>Failed login</td>
+                                    <td>windows</td>
+                                    <td>10.0.0.12</td>
+                                    <td>svcuser</td>
+                                    <td>
+                                        
+                                            <span class="severity-medium">medium</span>
+                                        
+                                    </td>
+                                </tr>
+                            
                         </tbody>
                     </table>
-                {% else %}
-                    <div class="no-data">No events recorded in the analysis window.</div>
-                {% endif %}
+                
             </section>
 
         </div>

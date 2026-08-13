@@ -107,4 +107,20 @@ Next I need to look through all the logs and categorise them by timestamp in ord
 
 The methods are all ready for integration.
 
+# HTML Reporting
+A timeline is great, because its readable, clear and useful for professionals who might have to use a console like this. Reports are also great though, because they are readable to everyone and can include cool graphics, which I will add later.
+
+To create comprehensive reports, I used Jinja2 templates. The report can contain:
+1. The analysis period (two timestamps; start and end)
+2. The total number of events
+3. The total number of failed logins
+4. The total number of Brute force attacks
+5. The total number of suspicious IPs
+6. The total number of firewall blocks
+7. A list of all the IPs categorised as critical risk
+8. A list of all the IPs categorised as caution risk
+9. The timeline, which can be extracted from the method in timeline.py
+
+I will add graphics later.
+
 # 
