@@ -123,4 +123,18 @@ To create comprehensive reports, I used Jinja2 templates. The report can contain
 
 I will add graphics later.
 
+# Visualising
+Next, the reports created in the last section need graphics, to pump them up and make them readable for everyone who might use this application. I decided to add the following graphs:
+- Security events over time (line graph)
+- Attacks by type (failed login, brute force etc.) (bar chart)
+- IPs by risk (bar chart)
+
+Key features of the final report:
+- Interactivity. Users can hover over grpahics and charts to see values.
+- Resposive. Works on all devices.
+- Printable. Charts render onto PDF downloads.
+- Real time. Charts are directly correlated to data extracted by the program.
+- Colour coded. Risk levels and severity are colour coded for improved usability.
+- I created a test file and found the size to be 63.5KB with perfect rendering and usability.
+
 # 

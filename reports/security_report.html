@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Security Analysis Report</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
     <style>
         * {
             margin: 0;
@@ -297,6 +298,41 @@
             font-size: 0.9em;
         }
 
+        .chart-container {
+            background: white;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: relative;
+            height: auto;
+        }
+
+        .chart-wrapper {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .chart-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .chart-item h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        .chart-item canvas {
+            max-height: 300px;
+        }
+
         @media print {
             body {
                 background: white;
@@ -331,11 +367,11 @@
                 </div>
                 <div class="period-item">
                     <strong>Analysis End</strong>
-                    <span>2026-08-12 16:00:00</span>
+                    <span>2026-08-12 21:00:00</span>
                 </div>
                 <div class="period-item">
                     <strong>Report Generated</strong>
-                    <span>2026-08-13 13:53:59</span>
+                    <span>2026-08-13 14:05:34</span>
                 </div>
             </div>
         </header>
@@ -348,19 +384,19 @@
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="label">Total Events Detected</div>
-                        <div class="value">3</div>
+                        <div class="value">20</div>
                     </div>
                     <div class="stat-card">
                         <div class="label">Suspicious IPs Found</div>
-                        <div class="value">2</div>
+                        <div class="value">4</div>
                     </div>
                     <div class="stat-card">
                         <div class="label">Critical Risk Events</div>
-                        <div class="value" style="color: #ff4757;">1</div>
+                        <div class="value" style="color: #ff4757;">8</div>
                     </div>
                     <div class="stat-card">
                         <div class="label">Analysis Sources</div>
-                        <div class="value">2</div>
+                        <div class="value">4</div>
                     </div>
                 </div>
             </section>
@@ -376,7 +412,7 @@
                                 <div>
                                     <strong>192.168.1.50</strong>
                                     <br>
-                                    <span style="color: #666; font-size: 0.9em;">Risk Score: 7 | Violations: 2</span>
+                                    <span style="color: #666; font-size: 0.9em;">Risk Score: 8 | Violations: 5</span>
                                 </div>
                                 <span class="ip-badge risk-critical">
                                     CRITICAL RISK
@@ -385,12 +421,34 @@
                         
                             <li class="ip-item">
                                 <div>
-                                    <strong>10.0.0.12</strong>
+                                    <strong>10.0.0.10</strong>
                                     <br>
-                                    <span style="color: #666; font-size: 0.9em;">Risk Score: 3 | Violations: 1</span>
+                                    <span style="color: #666; font-size: 0.9em;">Risk Score: 5 | Violations: 3</span>
                                 </div>
                                 <span class="ip-badge risk-caution">
                                     CAUTION RISK
+                                </span>
+                            </li>
+                        
+                            <li class="ip-item">
+                                <div>
+                                    <strong>172.16.0.0</strong>
+                                    <br>
+                                    <span style="color: #666; font-size: 0.9em;">Risk Score: 3 | Violations: 2</span>
+                                </div>
+                                <span class="ip-badge risk-caution">
+                                    CAUTION RISK
+                                </span>
+                            </li>
+                        
+                            <li class="ip-item">
+                                <div>
+                                    <strong>192.168.1.51</strong>
+                                    <br>
+                                    <span style="color: #666; font-size: 0.9em;">Risk Score: 2 | Violations: 1</span>
+                                </div>
+                                <span class="ip-badge risk-no">
+                                    NO RISK
                                 </span>
                             </li>
                         
@@ -400,7 +458,34 @@
 
             <!-- Alert Breakdown Section -->
             <section class="section">
-                <h2>📈 Alert Breakdown</h2>
+                <h2>📈 Visualizations</h2>
+                
+                <div class="chart-wrapper">
+                    <div class="chart-item">
+                        <h3>Events Over Time</h3>
+                        <canvas id="eventsOverTimeChart"></canvas>
+                    </div>
+
+                    <div class="chart-item">
+                        <h3>Events by Type</h3>
+                        <canvas id="eventsByTypeChart"></canvas>
+                    </div>
+
+                    <div class="chart-item">
+                        <h3>Events by Severity</h3>
+                        <canvas id="eventsBySeverityChart"></canvas>
+                    </div>
+
+                    <div class="chart-item">
+                        <h3>Top Suspicious IPs</h3>
+                        <canvas id="topIPsChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Alert Breakdown Section -->
+            <section class="section">
+                <h2>📊 Alert Breakdown</h2>
                 
                 <div class="breakdown-grid">
                     <div class="breakdown-section">
@@ -409,12 +494,27 @@
                             
                                 <div class="breakdown-item">
                                     <span>Brute force attack</span>
-                                    <span class="breakdown-count">1</span>
+                                    <span class="breakdown-count">4</span>
                                 </div>
                             
                                 <div class="breakdown-item">
                                     <span>Failed login</span>
-                                    <span class="breakdown-count">2</span>
+                                    <span class="breakdown-count">4</span>
+                                </div>
+                            
+                                <div class="breakdown-item">
+                                    <span>Port scan</span>
+                                    <span class="breakdown-count">4</span>
+                                </div>
+                            
+                                <div class="breakdown-item">
+                                    <span>Suspicious activity</span>
+                                    <span class="breakdown-count">4</span>
+                                </div>
+                            
+                                <div class="breakdown-item">
+                                    <span>Web attack</span>
+                                    <span class="breakdown-count">4</span>
                                 </div>
                             
                         
@@ -426,12 +526,17 @@
                             
                                 <div class="breakdown-item">
                                     <span>High</span>
-                                    <span class="breakdown-count">1</span>
+                                    <span class="breakdown-count">8</span>
+                                </div>
+                            
+                                <div class="breakdown-item">
+                                    <span>Low</span>
+                                    <span class="breakdown-count">4</span>
                                 </div>
                             
                                 <div class="breakdown-item">
                                     <span>Medium</span>
-                                    <span class="breakdown-count">2</span>
+                                    <span class="breakdown-count">8</span>
                                 </div>
                             
                         
@@ -442,13 +547,23 @@
                         
                             
                                 <div class="breakdown-item">
+                                    <span>Apache</span>
+                                    <span class="breakdown-count">5</span>
+                                </div>
+                            
+                                <div class="breakdown-item">
+                                    <span>Firewall</span>
+                                    <span class="breakdown-count">5</span>
+                                </div>
+                            
+                                <div class="breakdown-item">
                                     <span>Ssh</span>
-                                    <span class="breakdown-count">2</span>
+                                    <span class="breakdown-count">5</span>
                                 </div>
                             
                                 <div class="breakdown-item">
                                     <span>Windows</span>
-                                    <span class="breakdown-count">1</span>
+                                    <span class="breakdown-count">5</span>
                                 </div>
                             
                         
@@ -464,33 +579,9 @@
                     <div>
                         
                             <div class="timeline-event">
-                                <div class="timeline-timestamp">⏰ 2026-08-12 15:03:00</div>
+                                <div class="timeline-timestamp">⏰ 2026-08-12 15:00:00</div>
                                 <div class="timeline-type">
                                     Failed login
-                                    
-                                        <span class="severity-medium">MEDIUM</span>
-                                    
-                                </div>
-                                <div class="timeline-details">
-                                    
-                                        <div class="timeline-detail-item"><strong>Source:</strong> ssh</div>
-                                    
-                                    
-                                        <div class="timeline-detail-item"><strong>IP Address:</strong> 192.168.1.50</div>
-                                    
-                                    
-                                        <div class="timeline-detail-item"><strong>Username:</strong> admin</div>
-                                    
-                                    
-                                        <div class="timeline-detail-item"><strong>Message:</strong> Failed password attempt</div>
-                                    
-                                </div>
-                            </div>
-                        
-                            <div class="timeline-event">
-                                <div class="timeline-timestamp">⏰ 2026-08-12 15:05:30</div>
-                                <div class="timeline-type">
-                                    Brute force attack
                                     
                                         <span class="severity-high">HIGH</span>
                                     
@@ -503,16 +594,18 @@
                                         <div class="timeline-detail-item"><strong>IP Address:</strong> 192.168.1.50</div>
                                     
                                     
+                                        <div class="timeline-detail-item"><strong>Username:</strong> user0</div>
                                     
-                                        <div class="timeline-detail-item"><strong>Message:</strong> 5 failed logins detected within 300 seconds</div>
+                                    
+                                        <div class="timeline-detail-item"><strong>Message:</strong> Alert 0: Suspicious activity detected</div>
                                     
                                 </div>
                             </div>
                         
                             <div class="timeline-event">
-                                <div class="timeline-timestamp">⏰ 2026-08-12 15:10:00</div>
+                                <div class="timeline-timestamp">⏰ 2026-08-12 15:05:00</div>
                                 <div class="timeline-type">
-                                    Failed login
+                                    Brute force attack
                                     
                                         <span class="severity-medium">MEDIUM</span>
                                     
@@ -522,13 +615,445 @@
                                         <div class="timeline-detail-item"><strong>Source:</strong> windows</div>
                                     
                                     
-                                        <div class="timeline-detail-item"><strong>IP Address:</strong> 10.0.0.12</div>
+                                        <div class="timeline-detail-item"><strong>IP Address:</strong> 10.0.0.11</div>
                                     
                                     
-                                        <div class="timeline-detail-item"><strong>Username:</strong> svcuser</div>
+                                        <div class="timeline-detail-item"><strong>Username:</strong> user1</div>
                                     
                                     
-                                        <div class="timeline-detail-item"><strong>Message:</strong> Failed account logon</div>
+                                        <div class="timeline-detail-item"><strong>Message:</strong> Alert 1: Suspicious activity detected</div>
+                                    
+                                </div>
+                            </div>
+                        
+                            <div class="timeline-event">
+                                <div class="timeline-timestamp">⏰ 2026-08-12 15:10:00</div>
+                                <div class="timeline-type">
+                                    Suspicious activity
+                                    
+                                        <span class="severity-low">LOW</span>
+                                    
+                                </div>
+                                <div class="timeline-details">
+                                    
+                                        <div class="timeline-detail-item"><strong>Source:</strong> apache</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>IP Address:</strong> 172.16.0.2</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Username:</strong> user2</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Message:</strong> Alert 2: Suspicious activity detected</div>
+                                    
+                                </div>
+                            </div>
+                        
+                            <div class="timeline-event">
+                                <div class="timeline-timestamp">⏰ 2026-08-12 15:15:00</div>
+                                <div class="timeline-type">
+                                    Port scan
+                                    
+                                        <span class="severity-high">HIGH</span>
+                                    
+                                </div>
+                                <div class="timeline-details">
+                                    
+                                        <div class="timeline-detail-item"><strong>Source:</strong> firewall</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>IP Address:</strong> 192.168.1.53</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Username:</strong> user3</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Message:</strong> Alert 3: Suspicious activity detected</div>
+                                    
+                                </div>
+                            </div>
+                        
+                            <div class="timeline-event">
+                                <div class="timeline-timestamp">⏰ 2026-08-12 15:20:00</div>
+                                <div class="timeline-type">
+                                    Web attack
+                                    
+                                        <span class="severity-medium">MEDIUM</span>
+                                    
+                                </div>
+                                <div class="timeline-details">
+                                    
+                                        <div class="timeline-detail-item"><strong>Source:</strong> ssh</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>IP Address:</strong> 10.0.0.14</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Username:</strong> user4</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Message:</strong> Alert 4: Suspicious activity detected</div>
+                                    
+                                </div>
+                            </div>
+                        
+                            <div class="timeline-event">
+                                <div class="timeline-timestamp">⏰ 2026-08-12 16:25:00</div>
+                                <div class="timeline-type">
+                                    Failed login
+                                    
+                                        <span class="severity-high">HIGH</span>
+                                    
+                                </div>
+                                <div class="timeline-details">
+                                    
+                                        <div class="timeline-detail-item"><strong>Source:</strong> windows</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>IP Address:</strong> 172.16.0.5</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Username:</strong> user5</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Message:</strong> Alert 5: Suspicious activity detected</div>
+                                    
+                                </div>
+                            </div>
+                        
+                            <div class="timeline-event">
+                                <div class="timeline-timestamp">⏰ 2026-08-12 16:30:00</div>
+                                <div class="timeline-type">
+                                    Brute force attack
+                                    
+                                        <span class="severity-medium">MEDIUM</span>
+                                    
+                                </div>
+                                <div class="timeline-details">
+                                    
+                                        <div class="timeline-detail-item"><strong>Source:</strong> apache</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>IP Address:</strong> 192.168.1.56</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Username:</strong> user6</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Message:</strong> Alert 6: Suspicious activity detected</div>
+                                    
+                                </div>
+                            </div>
+                        
+                            <div class="timeline-event">
+                                <div class="timeline-timestamp">⏰ 2026-08-12 16:35:00</div>
+                                <div class="timeline-type">
+                                    Suspicious activity
+                                    
+                                        <span class="severity-low">LOW</span>
+                                    
+                                </div>
+                                <div class="timeline-details">
+                                    
+                                        <div class="timeline-detail-item"><strong>Source:</strong> firewall</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>IP Address:</strong> 10.0.0.17</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Username:</strong> user7</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Message:</strong> Alert 7: Suspicious activity detected</div>
+                                    
+                                </div>
+                            </div>
+                        
+                            <div class="timeline-event">
+                                <div class="timeline-timestamp">⏰ 2026-08-12 16:40:00</div>
+                                <div class="timeline-type">
+                                    Port scan
+                                    
+                                        <span class="severity-high">HIGH</span>
+                                    
+                                </div>
+                                <div class="timeline-details">
+                                    
+                                        <div class="timeline-detail-item"><strong>Source:</strong> ssh</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>IP Address:</strong> 172.16.0.8</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Username:</strong> user8</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Message:</strong> Alert 8: Suspicious activity detected</div>
+                                    
+                                </div>
+                            </div>
+                        
+                            <div class="timeline-event">
+                                <div class="timeline-timestamp">⏰ 2026-08-12 16:45:00</div>
+                                <div class="timeline-type">
+                                    Web attack
+                                    
+                                        <span class="severity-medium">MEDIUM</span>
+                                    
+                                </div>
+                                <div class="timeline-details">
+                                    
+                                        <div class="timeline-detail-item"><strong>Source:</strong> windows</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>IP Address:</strong> 192.168.1.59</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Username:</strong> user9</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Message:</strong> Alert 9: Suspicious activity detected</div>
+                                    
+                                </div>
+                            </div>
+                        
+                            <div class="timeline-event">
+                                <div class="timeline-timestamp">⏰ 2026-08-12 17:50:00</div>
+                                <div class="timeline-type">
+                                    Failed login
+                                    
+                                        <span class="severity-high">HIGH</span>
+                                    
+                                </div>
+                                <div class="timeline-details">
+                                    
+                                        <div class="timeline-detail-item"><strong>Source:</strong> apache</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>IP Address:</strong> 10.0.0.20</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Username:</strong> user10</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Message:</strong> Alert 10: Suspicious activity detected</div>
+                                    
+                                </div>
+                            </div>
+                        
+                            <div class="timeline-event">
+                                <div class="timeline-timestamp">⏰ 2026-08-12 17:55:00</div>
+                                <div class="timeline-type">
+                                    Brute force attack
+                                    
+                                        <span class="severity-medium">MEDIUM</span>
+                                    
+                                </div>
+                                <div class="timeline-details">
+                                    
+                                        <div class="timeline-detail-item"><strong>Source:</strong> firewall</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>IP Address:</strong> 172.16.0.11</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Username:</strong> user11</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Message:</strong> Alert 11: Suspicious activity detected</div>
+                                    
+                                </div>
+                            </div>
+                        
+                            <div class="timeline-event">
+                                <div class="timeline-timestamp">⏰ 2026-08-12 18:00:00</div>
+                                <div class="timeline-type">
+                                    Suspicious activity
+                                    
+                                        <span class="severity-low">LOW</span>
+                                    
+                                </div>
+                                <div class="timeline-details">
+                                    
+                                        <div class="timeline-detail-item"><strong>Source:</strong> ssh</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>IP Address:</strong> 192.168.1.62</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Username:</strong> user12</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Message:</strong> Alert 12: Suspicious activity detected</div>
+                                    
+                                </div>
+                            </div>
+                        
+                            <div class="timeline-event">
+                                <div class="timeline-timestamp">⏰ 2026-08-12 18:05:00</div>
+                                <div class="timeline-type">
+                                    Port scan
+                                    
+                                        <span class="severity-high">HIGH</span>
+                                    
+                                </div>
+                                <div class="timeline-details">
+                                    
+                                        <div class="timeline-detail-item"><strong>Source:</strong> windows</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>IP Address:</strong> 10.0.0.23</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Username:</strong> user13</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Message:</strong> Alert 13: Suspicious activity detected</div>
+                                    
+                                </div>
+                            </div>
+                        
+                            <div class="timeline-event">
+                                <div class="timeline-timestamp">⏰ 2026-08-12 18:10:00</div>
+                                <div class="timeline-type">
+                                    Web attack
+                                    
+                                        <span class="severity-medium">MEDIUM</span>
+                                    
+                                </div>
+                                <div class="timeline-details">
+                                    
+                                        <div class="timeline-detail-item"><strong>Source:</strong> apache</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>IP Address:</strong> 172.16.0.14</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Username:</strong> user14</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Message:</strong> Alert 14: Suspicious activity detected</div>
+                                    
+                                </div>
+                            </div>
+                        
+                            <div class="timeline-event">
+                                <div class="timeline-timestamp">⏰ 2026-08-12 19:15:00</div>
+                                <div class="timeline-type">
+                                    Failed login
+                                    
+                                        <span class="severity-high">HIGH</span>
+                                    
+                                </div>
+                                <div class="timeline-details">
+                                    
+                                        <div class="timeline-detail-item"><strong>Source:</strong> firewall</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>IP Address:</strong> 192.168.1.65</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Username:</strong> user15</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Message:</strong> Alert 15: Suspicious activity detected</div>
+                                    
+                                </div>
+                            </div>
+                        
+                            <div class="timeline-event">
+                                <div class="timeline-timestamp">⏰ 2026-08-12 19:20:00</div>
+                                <div class="timeline-type">
+                                    Brute force attack
+                                    
+                                        <span class="severity-medium">MEDIUM</span>
+                                    
+                                </div>
+                                <div class="timeline-details">
+                                    
+                                        <div class="timeline-detail-item"><strong>Source:</strong> ssh</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>IP Address:</strong> 10.0.0.26</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Username:</strong> user16</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Message:</strong> Alert 16: Suspicious activity detected</div>
+                                    
+                                </div>
+                            </div>
+                        
+                            <div class="timeline-event">
+                                <div class="timeline-timestamp">⏰ 2026-08-12 19:25:00</div>
+                                <div class="timeline-type">
+                                    Suspicious activity
+                                    
+                                        <span class="severity-low">LOW</span>
+                                    
+                                </div>
+                                <div class="timeline-details">
+                                    
+                                        <div class="timeline-detail-item"><strong>Source:</strong> windows</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>IP Address:</strong> 172.16.0.17</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Username:</strong> user17</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Message:</strong> Alert 17: Suspicious activity detected</div>
+                                    
+                                </div>
+                            </div>
+                        
+                            <div class="timeline-event">
+                                <div class="timeline-timestamp">⏰ 2026-08-12 19:30:00</div>
+                                <div class="timeline-type">
+                                    Port scan
+                                    
+                                        <span class="severity-high">HIGH</span>
+                                    
+                                </div>
+                                <div class="timeline-details">
+                                    
+                                        <div class="timeline-detail-item"><strong>Source:</strong> apache</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>IP Address:</strong> 192.168.1.68</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Username:</strong> user18</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Message:</strong> Alert 18: Suspicious activity detected</div>
+                                    
+                                </div>
+                            </div>
+                        
+                            <div class="timeline-event">
+                                <div class="timeline-timestamp">⏰ 2026-08-12 19:35:00</div>
+                                <div class="timeline-type">
+                                    Web attack
+                                    
+                                        <span class="severity-medium">MEDIUM</span>
+                                    
+                                </div>
+                                <div class="timeline-details">
+                                    
+                                        <div class="timeline-detail-item"><strong>Source:</strong> firewall</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>IP Address:</strong> 10.0.0.29</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Username:</strong> user19</div>
+                                    
+                                    
+                                        <div class="timeline-detail-item"><strong>Message:</strong> Alert 19: Suspicious activity detected</div>
                                     
                                 </div>
                             </div>
@@ -557,24 +1082,11 @@
                         <tbody>
                             
                                 <tr>
-                                    <td>2026-08-12 15:03:00</td>
+                                    <td>2026-08-12 15:00:00</td>
                                     <td>Failed login</td>
                                     <td>ssh</td>
                                     <td>192.168.1.50</td>
-                                    <td>admin</td>
-                                    <td>
-                                        
-                                            <span class="severity-medium">medium</span>
-                                        
-                                    </td>
-                                </tr>
-                            
-                                <tr>
-                                    <td>2026-08-12 15:05:30</td>
-                                    <td>Brute force attack</td>
-                                    <td>ssh</td>
-                                    <td>192.168.1.50</td>
-                                    <td>N/A</td>
+                                    <td>user0</td>
                                     <td>
                                         
                                             <span class="severity-high">high</span>
@@ -583,11 +1095,245 @@
                                 </tr>
                             
                                 <tr>
+                                    <td>2026-08-12 15:05:00</td>
+                                    <td>Brute force attack</td>
+                                    <td>windows</td>
+                                    <td>10.0.0.11</td>
+                                    <td>user1</td>
+                                    <td>
+                                        
+                                            <span class="severity-medium">medium</span>
+                                        
+                                    </td>
+                                </tr>
+                            
+                                <tr>
                                     <td>2026-08-12 15:10:00</td>
+                                    <td>Suspicious activity</td>
+                                    <td>apache</td>
+                                    <td>172.16.0.2</td>
+                                    <td>user2</td>
+                                    <td>
+                                        
+                                            <span class="severity-low">low</span>
+                                        
+                                    </td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>2026-08-12 15:15:00</td>
+                                    <td>Port scan</td>
+                                    <td>firewall</td>
+                                    <td>192.168.1.53</td>
+                                    <td>user3</td>
+                                    <td>
+                                        
+                                            <span class="severity-high">high</span>
+                                        
+                                    </td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>2026-08-12 15:20:00</td>
+                                    <td>Web attack</td>
+                                    <td>ssh</td>
+                                    <td>10.0.0.14</td>
+                                    <td>user4</td>
+                                    <td>
+                                        
+                                            <span class="severity-medium">medium</span>
+                                        
+                                    </td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>2026-08-12 16:25:00</td>
                                     <td>Failed login</td>
                                     <td>windows</td>
-                                    <td>10.0.0.12</td>
-                                    <td>svcuser</td>
+                                    <td>172.16.0.5</td>
+                                    <td>user5</td>
+                                    <td>
+                                        
+                                            <span class="severity-high">high</span>
+                                        
+                                    </td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>2026-08-12 16:30:00</td>
+                                    <td>Brute force attack</td>
+                                    <td>apache</td>
+                                    <td>192.168.1.56</td>
+                                    <td>user6</td>
+                                    <td>
+                                        
+                                            <span class="severity-medium">medium</span>
+                                        
+                                    </td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>2026-08-12 16:35:00</td>
+                                    <td>Suspicious activity</td>
+                                    <td>firewall</td>
+                                    <td>10.0.0.17</td>
+                                    <td>user7</td>
+                                    <td>
+                                        
+                                            <span class="severity-low">low</span>
+                                        
+                                    </td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>2026-08-12 16:40:00</td>
+                                    <td>Port scan</td>
+                                    <td>ssh</td>
+                                    <td>172.16.0.8</td>
+                                    <td>user8</td>
+                                    <td>
+                                        
+                                            <span class="severity-high">high</span>
+                                        
+                                    </td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>2026-08-12 16:45:00</td>
+                                    <td>Web attack</td>
+                                    <td>windows</td>
+                                    <td>192.168.1.59</td>
+                                    <td>user9</td>
+                                    <td>
+                                        
+                                            <span class="severity-medium">medium</span>
+                                        
+                                    </td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>2026-08-12 17:50:00</td>
+                                    <td>Failed login</td>
+                                    <td>apache</td>
+                                    <td>10.0.0.20</td>
+                                    <td>user10</td>
+                                    <td>
+                                        
+                                            <span class="severity-high">high</span>
+                                        
+                                    </td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>2026-08-12 17:55:00</td>
+                                    <td>Brute force attack</td>
+                                    <td>firewall</td>
+                                    <td>172.16.0.11</td>
+                                    <td>user11</td>
+                                    <td>
+                                        
+                                            <span class="severity-medium">medium</span>
+                                        
+                                    </td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>2026-08-12 18:00:00</td>
+                                    <td>Suspicious activity</td>
+                                    <td>ssh</td>
+                                    <td>192.168.1.62</td>
+                                    <td>user12</td>
+                                    <td>
+                                        
+                                            <span class="severity-low">low</span>
+                                        
+                                    </td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>2026-08-12 18:05:00</td>
+                                    <td>Port scan</td>
+                                    <td>windows</td>
+                                    <td>10.0.0.23</td>
+                                    <td>user13</td>
+                                    <td>
+                                        
+                                            <span class="severity-high">high</span>
+                                        
+                                    </td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>2026-08-12 18:10:00</td>
+                                    <td>Web attack</td>
+                                    <td>apache</td>
+                                    <td>172.16.0.14</td>
+                                    <td>user14</td>
+                                    <td>
+                                        
+                                            <span class="severity-medium">medium</span>
+                                        
+                                    </td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>2026-08-12 19:15:00</td>
+                                    <td>Failed login</td>
+                                    <td>firewall</td>
+                                    <td>192.168.1.65</td>
+                                    <td>user15</td>
+                                    <td>
+                                        
+                                            <span class="severity-high">high</span>
+                                        
+                                    </td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>2026-08-12 19:20:00</td>
+                                    <td>Brute force attack</td>
+                                    <td>ssh</td>
+                                    <td>10.0.0.26</td>
+                                    <td>user16</td>
+                                    <td>
+                                        
+                                            <span class="severity-medium">medium</span>
+                                        
+                                    </td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>2026-08-12 19:25:00</td>
+                                    <td>Suspicious activity</td>
+                                    <td>windows</td>
+                                    <td>172.16.0.17</td>
+                                    <td>user17</td>
+                                    <td>
+                                        
+                                            <span class="severity-low">low</span>
+                                        
+                                    </td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>2026-08-12 19:30:00</td>
+                                    <td>Port scan</td>
+                                    <td>apache</td>
+                                    <td>192.168.1.68</td>
+                                    <td>user18</td>
+                                    <td>
+                                        
+                                            <span class="severity-high">high</span>
+                                        
+                                    </td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>2026-08-12 19:35:00</td>
+                                    <td>Web attack</td>
+                                    <td>firewall</td>
+                                    <td>10.0.0.29</td>
+                                    <td>user19</td>
                                     <td>
                                         
                                             <span class="severity-medium">medium</span>
@@ -607,5 +1353,164 @@
             <p>This report contains confidential security information. Handle with care.</p>
         </footer>
     </div>
+
+    <script>
+        // Chart.js configuration
+        Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+        Chart.defaults.color = '#666';
+
+        // Events Over Time Chart
+        
+        const eventsOverTimeCtx = document.getElementById('eventsOverTimeChart').getContext('2d');
+        new Chart(eventsOverTimeCtx, {
+            type: 'line',
+            data: {
+                labels: ["2026-08-12 15:00", "2026-08-12 16:00", "2026-08-12 17:00", "2026-08-12 18:00", "2026-08-12 19:00"],
+                datasets: [{
+                    label: 'Events per Hour',
+                    data: [5, 5, 2, 3, 5],
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#667eea',
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+        
+
+        // Events by Type Chart
+        
+        const eventsByTypeCtx = document.getElementById('eventsByTypeChart').getContext('2d');
+        new Chart(eventsByTypeCtx, {
+            type: 'bar',
+            data: {
+                labels: ["Failed login", "Brute force attack", "Suspicious activity", "Port scan", "Web attack"],
+                datasets: [{
+                    label: 'Count',
+                    data: [4, 4, 4, 4, 4],
+                    backgroundColor: [
+                        '#667eea',
+                        '#764ba2',
+                        '#ff6b6b',
+                        '#ffa502',
+                        '#2ed573',
+                        '#5f27cd'
+                    ],
+                    borderColor: '#667eea',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+        
+
+        // Events by Severity Chart
+        
+        const eventsBySeverityCtx = document.getElementById('eventsBySeverityChart').getContext('2d');
+        new Chart(eventsBySeverityCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ["High", "Medium", "Low"],
+                datasets: [{
+                    data: [8, 8, 4],
+                    backgroundColor: [
+                        '#ff4757',
+                        '#ffa502',
+                        '#2ed573',
+                        '#95a5a6'
+                    ],
+                    borderColor: 'white',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+        
+
+        // Top IPs Chart
+        
+        const topIPsCtx = document.getElementById('topIPsChart').getContext('2d');
+        new Chart(topIPsCtx, {
+            type: 'bar',
+            data: {
+                labels: ["192.168.1.50", "10.0.0.10", "172.16.0.0", "192.168.1.51"],
+                datasets: [{
+                    label: 'Risk Score',
+                    data: [8, 5, 3, 2],
+                    backgroundColor: function(context) {
+                        const value = context.dataset.data[context.dataIndex];
+                        if (value >= 7) return '#ff4757';
+                        if (value >= 3) return '#ffa502';
+                        return '#2ed573';
+                    },
+                    borderColor: '#667eea',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+    </script>
 </body>
 </html>

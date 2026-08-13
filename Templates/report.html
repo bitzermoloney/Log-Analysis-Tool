@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Security Analysis Report</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
     <style>
         * {
             margin: 0;
@@ -297,6 +298,41 @@
             font-size: 0.9em;
         }
 
+        .chart-container {
+            background: white;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: relative;
+            height: auto;
+        }
+
+        .chart-wrapper {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .chart-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .chart-item h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        .chart-item canvas {
+            max-height: 300px;
+        }
+
         @media print {
             body {
                 background: white;
@@ -391,7 +427,34 @@
 
             <!-- Alert Breakdown Section -->
             <section class="section">
-                <h2>📈 Alert Breakdown</h2>
+                <h2>📈 Visualizations</h2>
+                
+                <div class="chart-wrapper">
+                    <div class="chart-item">
+                        <h3>Events Over Time</h3>
+                        <canvas id="eventsOverTimeChart"></canvas>
+                    </div>
+
+                    <div class="chart-item">
+                        <h3>Events by Type</h3>
+                        <canvas id="eventsByTypeChart"></canvas>
+                    </div>
+
+                    <div class="chart-item">
+                        <h3>Events by Severity</h3>
+                        <canvas id="eventsBySeverityChart"></canvas>
+                    </div>
+
+                    <div class="chart-item">
+                        <h3>Top Suspicious IPs</h3>
+                        <canvas id="topIPsChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Alert Breakdown Section -->
+            <section class="section">
+                <h2>📊 Alert Breakdown</h2>
                 
                 <div class="breakdown-grid">
                     <div class="breakdown-section">
@@ -527,5 +590,164 @@
             <p>This report contains confidential security information. Handle with care.</p>
         </footer>
     </div>
+
+    <script>
+        // Chart.js configuration
+        Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+        Chart.defaults.color = '#666';
+
+        // Events Over Time Chart
+        {% if chart_data.events_over_time %}
+        const eventsOverTimeCtx = document.getElementById('eventsOverTimeChart').getContext('2d');
+        new Chart(eventsOverTimeCtx, {
+            type: 'line',
+            data: {
+                labels: {{ chart_data.events_over_time.labels|tojson }},
+                datasets: [{
+                    label: 'Events per Hour',
+                    data: {{ chart_data.events_over_time.data|tojson }},
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#667eea',
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+        {% endif %}
+
+        // Events by Type Chart
+        {% if chart_data.events_by_type %}
+        const eventsByTypeCtx = document.getElementById('eventsByTypeChart').getContext('2d');
+        new Chart(eventsByTypeCtx, {
+            type: 'bar',
+            data: {
+                labels: {{ chart_data.events_by_type.labels|tojson }},
+                datasets: [{
+                    label: 'Count',
+                    data: {{ chart_data.events_by_type.data|tojson }},
+                    backgroundColor: [
+                        '#667eea',
+                        '#764ba2',
+                        '#ff6b6b',
+                        '#ffa502',
+                        '#2ed573',
+                        '#5f27cd'
+                    ],
+                    borderColor: '#667eea',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+        {% endif %}
+
+        // Events by Severity Chart
+        {% if chart_data.events_by_severity %}
+        const eventsBySeverityCtx = document.getElementById('eventsBySeverityChart').getContext('2d');
+        new Chart(eventsBySeverityCtx, {
+            type: 'doughnut',
+            data: {
+                labels: {{ chart_data.events_by_severity.labels|tojson }},
+                datasets: [{
+                    data: {{ chart_data.events_by_severity.data|tojson }},
+                    backgroundColor: [
+                        '#ff4757',
+                        '#ffa502',
+                        '#2ed573',
+                        '#95a5a6'
+                    ],
+                    borderColor: 'white',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+        {% endif %}
+
+        // Top IPs Chart
+        {% if chart_data.top_ips %}
+        const topIPsCtx = document.getElementById('topIPsChart').getContext('2d');
+        new Chart(topIPsCtx, {
+            type: 'bar',
+            data: {
+                labels: {{ chart_data.top_ips.labels|tojson }},
+                datasets: [{
+                    label: 'Risk Score',
+                    data: {{ chart_data.top_ips.data|tojson }},
+                    backgroundColor: function(context) {
+                        const value = context.dataset.data[context.dataIndex];
+                        if (value >= 7) return '#ff4757';
+                        if (value >= 3) return '#ffa502';
+                        return '#2ed573';
+                    },
+                    borderColor: '#667eea',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        {% endif %}
+    </script>
 </body>
 </html>

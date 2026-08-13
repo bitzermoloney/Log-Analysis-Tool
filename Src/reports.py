@@ -1,7 +1,7 @@
 """HTML report generator for security analysis results using Jinja2 templating."""
 
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 from collections import defaultdict
@@ -69,6 +69,14 @@ class ReportGenerator:
             # Get top suspicious IPs
             top_ips = self._get_top_suspicious_ips(suspicious_ips, top_n=10)
 
+            # Generate chart data
+            chart_data = {
+                'events_over_time': self._generate_events_over_time_chart(timeline_events),
+                'events_by_type': self._generate_events_by_type_chart(timeline_events),
+                'events_by_severity': self._generate_events_by_severity_chart(timeline_events),
+                'top_ips': self._generate_top_ips_chart(suspicious_ips, top_n=5),
+            }
+
             # Prepare context for template
             context = {
                 'analysis_start': analysis_start or 'N/A',
@@ -77,6 +85,7 @@ class ReportGenerator:
                 'summary': summary,
                 'top_suspicious_ips': top_ips,
                 'timeline_events': timeline_events or [],
+                'chart_data': chart_data,
             }
 
             # Render template
@@ -194,6 +203,154 @@ class ReportGenerator:
                 ip_info['violation_count'] = 1
 
         return sorted_ips[:top_n]
+
+    @staticmethod
+    def _parse_timestamp(value: Any) -> Optional[datetime]:
+        """Parse various timestamp formats."""
+        if value is None or value == '':
+            return None
+
+        if isinstance(value, datetime):
+            return value
+
+        value_str = str(value).strip()
+        formats = (
+            '%Y-%m-%d %H:%M:%S',
+            '%Y-%m-%dT%H:%M:%S',
+            '%Y-%m-%d %H:%M:%S.%f',
+            '%Y-%m-%dT%H:%M:%S.%f',
+            '%b %d %H:%M:%S',
+        )
+
+        for fmt in formats:
+            try:
+                return datetime.strptime(value_str, fmt)
+            except ValueError:
+                continue
+
+        try:
+            return datetime.fromisoformat(value_str.replace('Z', '+00:00'))
+        except ValueError:
+            return None
+
+    @staticmethod
+    def _generate_events_over_time_chart(
+        timeline_events: List[Dict[str, Any]]
+    ) -> Dict[str, List]:
+        """
+        Generate data for events over time chart (hourly bins).
+
+        Returns:
+            Dictionary with labels and data for chart
+        """
+        if not timeline_events:
+            return {'labels': [], 'data': []}
+
+        # Parse all timestamps and create hourly bins
+        hourly_counts = defaultdict(int)
+
+        for event in timeline_events:
+            timestamp = ReportGenerator._parse_timestamp(event.get('timestamp'))
+            if timestamp:
+                # Create hourly bucket (round down to nearest hour)
+                hour_key = timestamp.replace(minute=0, second=0, microsecond=0)
+                hourly_counts[hour_key] += 1
+
+        # Sort by time
+        sorted_hours = sorted(hourly_counts.keys())
+
+        if not sorted_hours:
+            return {'labels': [], 'data': []}
+
+        # Fill gaps with zeros
+        labels = []
+        data = []
+        current = sorted_hours[0]
+        end = sorted_hours[-1]
+
+        while current <= end:
+            labels.append(current.strftime('%Y-%m-%d %H:00'))
+            data.append(hourly_counts.get(current, 0))
+            current += timedelta(hours=1)
+
+        return {'labels': labels, 'data': data}
+
+    @staticmethod
+    def _generate_events_by_type_chart(
+        timeline_events: List[Dict[str, Any]]
+    ) -> Dict[str, List]:
+        """
+        Generate data for events by type chart.
+
+        Returns:
+            Dictionary with labels and data for chart
+        """
+        type_counts = defaultdict(int)
+
+        for event in timeline_events:
+            alert_type = event.get('alert_type', 'Unknown')
+            type_counts[alert_type] += 1
+
+        sorted_types = sorted(type_counts.items(), key=lambda x: x[1], reverse=True)
+
+        labels = [label for label, _ in sorted_types]
+        data = [count for _, count in sorted_types]
+
+        return {'labels': labels, 'data': data}
+
+    @staticmethod
+    def _generate_events_by_severity_chart(
+        timeline_events: List[Dict[str, Any]]
+    ) -> Dict[str, List]:
+        """
+        Generate data for events by severity chart.
+
+        Returns:
+            Dictionary with labels and data for chart
+        """
+        severity_counts = defaultdict(int)
+
+        for event in timeline_events:
+            severity = event.get('severity', 'unknown').lower()
+            severity_counts[severity] += 1
+
+        # Order by severity level
+        severity_order = ['critical', 'high', 'medium', 'low', 'unknown']
+        labels = []
+        data = []
+
+        for severity in severity_order:
+            if severity in severity_counts:
+                labels.append(severity.capitalize())
+                data.append(severity_counts[severity])
+
+        return {'labels': labels, 'data': data}
+
+    @staticmethod
+    def _generate_top_ips_chart(
+        suspicious_ips: List[Dict[str, Any]],
+        top_n: int = 5
+    ) -> Dict[str, List]:
+        """
+        Generate data for top IPs by risk score chart.
+
+        Returns:
+            Dictionary with labels and data for chart
+        """
+        if not suspicious_ips:
+            return {'labels': [], 'data': []}
+
+        sorted_ips = sorted(
+            suspicious_ips,
+            key=lambda x: x.get('score', 0),
+            reverse=True
+        )
+
+        top_ips = sorted_ips[:top_n]
+        labels = [ip.get('ip', 'Unknown') for ip in top_ips]
+        data = [ip.get('score', 0) for ip in top_ips]
+
+        return {'labels': labels, 'data': data}
 
     @staticmethod
     def _write_report(html_content: str, output_path: str) -> bool:
